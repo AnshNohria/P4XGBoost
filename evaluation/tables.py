@@ -51,7 +51,10 @@ def render_ablation_tables() -> str:
 
     for study in ABLATION_STUDIES:
         buffer.write(f"\n--- {study.title} ---\n")
-        if len(study.headers) == 4 and study.headers[3]:
+        if study.title.endswith("Temporal Window Reset Interval (W)"):
+            buffer.write(f"{study.headers[0]:<25} | {study.headers[1]:<10} | {study.headers[2]}\n")
+            buffer.write("-" * 75 + "\n")
+        elif len(study.headers) == 4 and study.headers[3]:
             buffer.write(
                 f"{study.headers[0]:<25} | {study.headers[1]:<10} | {study.headers[2]:<10} | {study.headers[3]}\n"
             )

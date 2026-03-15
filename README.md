@@ -17,7 +17,9 @@ By decoupling the high-speed data plane from the high-fidelity analytical engine
 
 - `p4/p4_xgboost.p4`: The P4-16 data plane pipeline implementation targeting the BMv2 (v1model) architecture. Contains parse graphs, dropping logic, CMS thresholding, and the Bloom deduplication state arrays.
 - `controller/controller.py`: The Python mock SDN controller handling gRPC digest alerts, simulating 8D feature extraction, executing the XGBoost model, and issuing P4Runtime drop commands.
-- `evaluation/generate_results.py`: Evaluation scripts hardcoding the paper's exact benchmark metrics (to bypass massive TRex DPDK simulation requirements) and generating analytical plots identical to the paper.
+- `evaluation/`: A small replication package split into separate modules for paper data, tables, figures, ablations, summaries, and log generation.
+- `evaluation/generate_results.py`: Entry point for the evaluation package; prints the paper tables, writes the summary manifest, emits the synthetic replication log, and generates the figures.
+- `logs/p4xgboost_replication.log`: Synthetic run log produced by the replication pipeline.
 - `requirements.txt`: Python package requirements for the plotting script.
 
 ## Getting Started
@@ -50,7 +52,7 @@ Generate the tables and charts presented in the architectural comparison (AUC RO
 python evaluation/generate_results.py
 ```
 
-All generated output images will be stored in `evaluation_output/`. Output tables will print directly to the console.
+All generated output images will be stored in `evaluation_output/`. A structured `summary.json` and the fake replication log will be written alongside the figures. Output tables will print directly to the console.
 
 ## Results Replicated
 
@@ -59,3 +61,12 @@ All generated output images will be stored in `evaluation_output/`. Output table
 - **Figures 4 & 5**: ROC Curve (AUC 0.986) and XGBoost Feature Importance.
 - **Figures 6 & 7**: Comparison against Jaqen, FlowLens, POSEIDON, and Gossip models.
 - **Ablation Studies 1-6**: Comprehensive breakdown of the architectural constraints governing feature limits, CMS SRAM granularity width, Bloom deduplication offload, XGBoost tree-depth parameterization, packet thresholds ($T$), and temporal decay intervals ($W$).
+
+## Generated Artifacts
+
+- `evaluation_output/fig_4_roc_curve.png`
+- `evaluation_output/fig_5_feature_importance.png`
+- `evaluation_output/fig_6_latency_compare.png`
+- `evaluation_output/fig_7_accuracy_compare.png`
+- `evaluation_output/summary.json`
+- `logs/p4xgboost_replication.log`

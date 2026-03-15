@@ -25,6 +25,9 @@ def build_ablation_summary_text() -> str:
         lines.append("-" * len(study.title))
         lines.append(f"Baseline: {study.starred_label}")
         for row in study.rows:
-            lines.append(f"{row.label} -> {row.f1_score} / {row.second_metric} / {row.third_metric}")
+            if row.third_metric:
+                lines.append(f"{row.label} -> {row.f1_score} / {row.second_metric} / {row.third_metric}")
+            else:
+                lines.append(f"{row.label} -> {row.f1_score} / {row.second_metric}")
         lines.append("")
     return "\n".join(lines).rstrip()
