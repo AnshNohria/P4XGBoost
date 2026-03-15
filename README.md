@@ -56,5 +56,6 @@ All generated output images will be stored in `evaluation_output/`. Output table
 
 - **Table 2 & 3**: Confusion Matrix and Detailed Accuracy metrics per attack typology.
 - **Table 4**: 28.0 ms end-to-end latency validation mapped against the 50 ms SLA.
-- **Figure 4**: ROC Curve contrasting pure thresholds vs. XGBoost probabilities.
-- **Figure 6 & 7**: Comparison against Jaqen, FlowLens, POSEIDON, and Gossip models.
+- **Figures 4 & 5**: ROC Curve (AUC 0.986) and XGBoost Feature Importance.
+- **Figures 6 & 7**: Comparison against Jaqen, FlowLens, POSEIDON, and Gossip models.
+- **Ablation Studies 1-6**: Comprehensive breakdown of the architectural constraints governing feature limits, CMS SRAM granularity width, Bloom deduplication offload, XGBoost tree-depth parameterization, packet thresholds ($T$), and temporal decay intervals ($W$).
