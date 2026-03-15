@@ -44,16 +44,6 @@ Simulate the controller receiving digests from the data plane, classifying the f
 python controller/controller.py
 ```
 
-### 3. Generate Paper Benchmarks
-
-Generate the tables and charts presented in the architectural comparison (AUC ROC, Feature Importance, Latency Comparison, and F1-Score comparison):
-
-```bash
-python evaluation/generate_results.py
-```
-
-All generated output images will be stored in `evaluation_output/`. A structured `summary.json` and the fake replication log will be written alongside the figures. Output tables will print directly to the console.
-
 ## Results Replicated
 
 - **Table 2 & 3**: Confusion Matrix and Detailed Accuracy metrics per attack typology.
