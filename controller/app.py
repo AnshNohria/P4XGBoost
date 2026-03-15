@@ -5,6 +5,7 @@ import time
 from controller.p4.p4runtime import P4RuntimeInterface
 from controller.core.features import FeatureExtractor
 from controller.ml.xgboost_model import XGBoostEnsemble
+from controller.core.metrics import ControllerMetrics
 
 class SDNController:
     """Main Orchestrator for the P4-XGBoost Hybrid System."""
@@ -15,6 +16,7 @@ class SDNController:
         self.ml_model = XGBoostEnsemble()
         self.threshold = threshold
         self.ip_blacklist = ip_blacklist or set()
+        self.metrics = ControllerMetrics()
 
     def handle_digest(self, digest_payload: dict) -> None:
         """Callback for parsing the 28-byte alert digest from the data plane."""
@@ -22,10 +24,13 @@ class SDNController:
         ingress_port = digest_payload.get('ingress_port', 0)
         
         print(f"\n[gRPC] Digest Received -> Src: {src_ip}, Port: {ingress_port}")
+        start_time = time.time()
         
         if src_ip in self.ip_blacklist:
             print(f"[BLACKLIST] IP {src_ip} is blacklisted. Dropping immediately.")
             self.p4_interface.install_drop_rule(src_ip)
+            latency = (time.time() - start_time) * 1000.0
+            self.metrics.record_digest(is_blacklisted=True, latency=latency)
             return
             
         if self.p4_interface.is_mitigated(src_ip):
@@ -44,8 +49,12 @@ class SDNController:
         if prob_malicious > self.threshold:
             print(f"[ALERT] Threat Detected (Prob: {prob_malicious:.3f}). Inference Time: 1.8 ms.")
             self.p4_interface.install_drop_rule(src_ip)
+            latency = (time.time() - start_time) * 1000.0
+            self.metrics.record_digest(is_malicious=True, latency=latency)
         else:
             print(f"[OK] Normal Traffic (Prob: {prob_malicious:.3f}).")
+            latency = (time.time() - start_time) * 1000.0
+            self.metrics.record_digest(is_malicious=False, latency=latency)
 
 def main():
     import argparse
@@ -74,7 +83,10 @@ def main():
     for d in to_process:
         controller.handle_digest(d)
         print("-" * 50)
+        
+    controller.metrics.export_to_json()
 
 if __name__ == "__main__":
     main()
+
 
