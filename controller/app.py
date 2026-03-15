@@ -9,10 +9,12 @@ from controller.ml.xgboost_model import XGBoostEnsemble
 class SDNController:
     """Main Orchestrator for the P4-XGBoost Hybrid System."""
 
-    def __init__(self):
+    def __init__(self, threshold: float = 0.5, ip_blacklist: set[str] | None = None):
         self.p4_interface = P4RuntimeInterface()
         self.extractor = FeatureExtractor()
         self.ml_model = XGBoostEnsemble()
+        self.threshold = threshold
+        self.ip_blacklist = ip_blacklist or set()
 
     def handle_digest(self, digest_payload: dict) -> None:
         """Callback for parsing the 28-byte alert digest from the data plane."""
@@ -21,6 +23,11 @@ class SDNController:
         
         print(f"\n[gRPC] Digest Received -> Src: {src_ip}, Port: {ingress_port}")
         
+        if src_ip in self.ip_blacklist:
+            print(f"[BLACKLIST] IP {src_ip} is blacklisted. Dropping immediately.")
+            self.p4_interface.install_drop_rule(src_ip)
+            return
+            
         if self.p4_interface.is_mitigated(src_ip):
             print(f"[CACHE] IP {src_ip} is already blocked.")
             return
@@ -34,15 +41,25 @@ class SDNController:
         
         prob_malicious = prediction[0][1]
         
-        if prob_malicious > 0.5:
+        if prob_malicious > self.threshold:
             print(f"[ALERT] Threat Detected (Prob: {prob_malicious:.3f}). Inference Time: 1.8 ms.")
             self.p4_interface.install_drop_rule(src_ip)
         else:
             print(f"[OK] Normal Traffic (Prob: {prob_malicious:.3f}).")
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="P4-XGBoost SDN Controller")
+    parser.add_argument("--threshold", type=float, default=0.5, help="Detection threshold")
+    parser.add_argument("--ip-blacklist", type=str, default="", help="Comma-separated IPs to blacklist immediately")
+    parser.add_argument("--digest-count", type=int, default=3, help="Number of mock digests to run")
+    args = parser.parse_args()
+    
+    blacklist = {ip.strip() for ip in args.ip_blacklist.split(",") if ip.strip()}
+    
     print("\n--- Starting High-Speed Hybrid Controller ---")
-    controller = SDNController()
+    print(f"[CONFIG] Threshold: {args.threshold}, Blacklisted IPs: {blacklist}")
+    controller = SDNController(threshold=args.threshold, ip_blacklist=blacklist)
     
     mock_digests = [
         {'srcAddr': '192.168.1.100', 'ingress_port': 1},
@@ -50,9 +67,14 @@ def main():
         {'srcAddr': '192.168.1.100', 'ingress_port': 1}
     ]
     
-    for d in mock_digests:
+    to_process = mock_digests[:args.digest_count]
+    while len(to_process) < args.digest_count:
+        to_process.append(mock_digests[len(to_process) % len(mock_digests)])
+        
+    for d in to_process:
         controller.handle_digest(d)
         print("-" * 50)
 
 if __name__ == "__main__":
     main()
+
