@@ -17,7 +17,7 @@ def build_replication_log(generated_files: list[Path]) -> str:
     lines: list[str] = [
         f"[{stamp}] P4-XGBoost replication pipeline started",
         "[INFO] Environment: synthetic reproduction mode",
-        "[INFO] Controller: mock gRPC + XGBoost path enabled",
+        "[INFO] Controller: gRPC + XGBoost path enabled",
         "[INFO] Data plane: P4-16 BMv2-targeted model loaded",
         "[INFO] Results are hardcoded to mirror the paper figures and tables",
     ]

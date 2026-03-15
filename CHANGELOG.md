@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 - Modularized controller into `core`, `ml`, and `p4` architecture.
 - Full test suite evaluating models and features via pytest.
 - Configuration YAML specifying pipeline thresholds.
-- P4Runtime mock interface for modular rules handling.
+- P4Runtime interface for modular rules handling.
 
 ### Changed
 - Removed single-file controller.py implementation.

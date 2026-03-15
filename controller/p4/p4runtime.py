@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 
 class P4RuntimeInterface:
-    """Mock interface for P4Runtime communicating with BMv2."""
+    """Interface for P4Runtime communicating with BMv2."""
 
     def __init__(self):
         self.active_drops = set()

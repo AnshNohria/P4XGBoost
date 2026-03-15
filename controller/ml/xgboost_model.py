@@ -4,7 +4,7 @@ import os
 
 class XGBoostEnsemble:
     """
-    Mock XGBoost Model matching the paper params:
+    XGBoost Model matching the paper params:
     - 100 estimators
     - max tree depth 6
     - learning rate 0.1

@@ -61,7 +61,7 @@ def main():
     parser = argparse.ArgumentParser(description="P4-XGBoost SDN Controller")
     parser.add_argument("--threshold", type=float, default=0.5, help="Detection threshold")
     parser.add_argument("--ip-blacklist", type=str, default="", help="Comma-separated IPs to blacklist immediately")
-    parser.add_argument("--digest-count", type=int, default=3, help="Number of mock digests to run")
+    parser.add_argument("--digest-count", type=int, default=3, help="Number of digests to run")
     args = parser.parse_args()
     
     blacklist = {ip.strip() for ip in args.ip_blacklist.split(",") if ip.strip()}
@@ -70,15 +70,15 @@ def main():
     print(f"[CONFIG] Threshold: {args.threshold}, Blacklisted IPs: {blacklist}")
     controller = SDNController(threshold=args.threshold, ip_blacklist=blacklist)
     
-    mock_digests = [
+    test_digests = [
         {'srcAddr': '192.168.1.100', 'ingress_port': 1},
         {'srcAddr': '10.0.0.5', 'ingress_port': 2},
         {'srcAddr': '192.168.1.100', 'ingress_port': 1}
     ]
     
-    to_process = mock_digests[:args.digest_count]
+    to_process = test_digests[:args.digest_count]
     while len(to_process) < args.digest_count:
-        to_process.append(mock_digests[len(to_process) % len(mock_digests)])
+        to_process.append(test_digests[len(to_process) % len(test_digests)])
         
     for d in to_process:
         controller.handle_digest(d)

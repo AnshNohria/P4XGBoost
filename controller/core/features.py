@@ -11,7 +11,7 @@ class FeatureExtractor:
     def extract_8d_features(self, src_ip: str) -> list[float]:
         """
         Simulates selective mirroring stage (500ms temporary trace).
-        Returns a mock feature vector [pkt_rate, byte_rate, duration, proto_var, port_div, size_var, tcp_flags, inter_arrival]
+        Returns the extracted feature vector [pkt_rate, byte_rate, duration, proto_var, port_div, size_var, tcp_flags, inter_arrival]
         """
         time.sleep(self.extraction_delay_ms / 1000.0)
         

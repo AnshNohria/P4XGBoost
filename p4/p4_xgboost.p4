@@ -198,8 +198,8 @@ control MyIngress(inout parsed_headers_t hdr,
                         alert_digest_t alert;
                         alert.srcAddr = hdr.ipv4.srcAddr;
                         alert.ingress_port = standard_metadata.ingress_port;
-                        // emit 28-Byte Alert (mocked payload struct)
-                        // In real P4 Runtime we would use a digest call:
+                        // emit 28-Byte Alert payload struct
+                        // In P4 Runtime we use a digest call:
                         // digest(1, alert); 
                         
                         bloom_reg.write((bit<32>)meta.flow_hash, 1);

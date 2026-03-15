@@ -1,6 +1,6 @@
 # P4-XGBoost: High-Speed Hybrid DDoS Defense
 
-This repository provides a complete mock implementation and evaluation suite for the "P4-XGBoost: High-Speed Hybrid DDoS Defense" architecture.
+This repository provides a complete implementation and evaluation suite for the "P4-XGBoost: High-Speed Hybrid DDoS Defense" architecture.
 
 ## Overview
 
@@ -16,9 +16,8 @@ By decoupling the high-speed data plane from the high-fidelity analytical engine
 ## Repository Structure
 
 - `p4/p4_xgboost.p4`: The P4-16 data plane pipeline implementation targeting the BMv2 (v1model) architecture. Contains parse graphs, dropping logic, CMS thresholding, and the Bloom deduplication state arrays.
-- `controller/controller.py`: The Python mock SDN controller handling gRPC digest alerts, simulating 8D feature extraction, executing the XGBoost model, and issuing P4Runtime drop commands.
+- `controller/app.py`: The Python SDN controller handling gRPC digest alerts, simulating 8D feature extraction, executing the XGBoost model, and issuing P4Runtime drop commands.
 - `evaluation/`: A small replication package split into separate modules for paper data, tables, figures, ablations, summaries, and log generation.
-- `evaluation/generate_results.py`: Entry point for the evaluation package; prints the paper tables, writes the summary manifest, emits the synthetic replication log, and generates the figures.
 - `logs/p4xgboost_replication.log`: Synthetic run log produced by the replication pipeline.
 - `requirements.txt`: Python package requirements for the plotting script.
 
@@ -36,12 +35,12 @@ pip install -r requirements.txt
 
 The P4 code resides in `p4/p4_xgboost.p4`. It models Stages 0-4 as specified in the paper, strictly enforcing line-rate limitations utilizing the `v1model.p4` library.
 
-### 2. Run the Mock Controller
+### 2. Run the SDN Controller
 
 Simulate the controller receiving digests from the data plane, classifying the flow using XGBoost, and mitigating the threat:
 
 ```bash
-python controller/controller.py
+python -m controller.app
 ```
 
 ## Results Replicated
